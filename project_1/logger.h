@@ -35,6 +35,4 @@ int logger_init(pointers_func dump_func);
 int log_log(importance_t importance, char * message, char * filename,  int line);
 int logger_close();
 
-
-
 #endif //PROJECT_1_LOGGER_H

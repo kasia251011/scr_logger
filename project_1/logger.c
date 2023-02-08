@@ -8,6 +8,7 @@ void turn_on_of_logger();
 
 logger_t logger;
 pthread_mutex_t file_mutex, importance_mutex;
+struct sigaction act_sigrtmin_backup, act_sigusr1_backup, act_sigusr2_backup;
 
 int logger_init(pointers_func dump_func) {
   logger.logger_file = fopen("logs.log", "w");
@@ -77,29 +78,32 @@ int log_log(importance_t importance, char * message, char * filename,  int line)
 int logger_close() {
     if(logger.logger_file == NULL) return  -1;
     fclose(logger.logger_file);
+    sigaction(SIGRTMIN, &act_sigrtmin_backup, NULL);
+    sigaction(SIGUSR1, &act_sigusr1_backup, NULL);
+    sigaction(SIGUSR2, &act_sigusr2_backup, NULL);
     return 0;
 }
 
 
 void detect_signal() {
-  struct sigaction act1, act2, act3;
+  struct sigaction act_sigrtmin, act_sigusr1, act_sigusr2;
   sigset_t set;
   sigfillset(&set);
 
-  act1.sa_sigaction = change_logger_importance;
-  act1.sa_mask = set;
-  act1.sa_flags = SA_SIGINFO;
-  sigaction(SIGRTMIN, &act1, NULL);
+  act_sigrtmin.sa_sigaction = change_logger_importance;
+  act_sigrtmin.sa_mask = set;
+  act_sigrtmin.sa_flags = SA_SIGINFO;
+  sigaction(SIGRTMIN, &act_sigrtmin, &act_sigrtmin_backup);
 
-  act2.sa_sigaction = turn_on_of_logger;
-  act2.sa_mask = set;
-  act2.sa_flags = 0;
-  sigaction(SIGUSR1, &act2, NULL);
+  act_sigusr1.sa_sigaction = turn_on_of_logger;
+  act_sigusr1.sa_mask = set;
+  act_sigusr1.sa_flags = 0;
+  sigaction(SIGUSR1, &act_sigusr1, &act_sigusr1_backup);
 
-  act3.sa_sigaction = create_dump_file;
-  act3.sa_mask = set;
-  act3.sa_flags = 0;
-  sigaction(SIGUSR2, &act3, NULL);
+  act_sigusr2.sa_sigaction = create_dump_file;
+  act_sigusr2.sa_mask = set;
+  act_sigusr2.sa_flags = 0;
+  sigaction(SIGUSR2, &act_sigusr2, &act_sigusr2_backup);
 
 }
 
