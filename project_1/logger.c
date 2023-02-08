@@ -1,5 +1,11 @@
 #include "logger.h"
 
+void detect_signal();
+void dump(const void * start_addr, const void * end_addr) ;
+void create_dump_file(int signo, siginfo_t* info, void* other);
+void change_logger_importance();
+void turn_on_of_logger();
+
 logger_t logger;
 pthread_mutex_t file_mutex, importance_mutex;
 
@@ -20,7 +26,6 @@ int logger_init(pointers_func dump_func) {
 }
 
 void change_logger_importance(int signo, siginfo_t* info, void* other) {
-  pthread_mutex_lock(&importance_mutex);
   switch (info->si_value.sival_int) {
     case MIN:
     case STANDARD:
@@ -32,10 +37,9 @@ void change_logger_importance(int signo, siginfo_t* info, void* other) {
       logger.importance = STANDARD;
       break;
   }
-  pthread_mutex_unlock(&importance_mutex);
 }
 
-void turn_on_of_logger(int signo, siginfo_t* info, void* other) {
+void turn_on_of_logger() {
   if(logger.isLoggerOn) {
     logger.isLoggerOn = 0;
   } else {
@@ -43,7 +47,7 @@ void turn_on_of_logger(int signo, siginfo_t* info, void* other) {
   }
 }
 
-void create_dump_file(int signo, siginfo_t* info, void* other) {
+void create_dump_file() {
   struct pointers_t pointers = logger.dump_func();
   dump(pointers.start_addr, pointers.end_addr);
 
@@ -89,12 +93,12 @@ void detect_signal() {
 
   act2.sa_sigaction = turn_on_of_logger;
   act2.sa_mask = set;
-  act2.sa_flags = SA_SIGINFO;
+  act2.sa_flags = 0;
   sigaction(SIGUSR1, &act2, NULL);
 
   act3.sa_sigaction = create_dump_file;
   act3.sa_mask = set;
-  act3.sa_flags = SA_SIGINFO;
+  act3.sa_flags = 0;
   sigaction(SIGUSR2, &act3, NULL);
 
 }

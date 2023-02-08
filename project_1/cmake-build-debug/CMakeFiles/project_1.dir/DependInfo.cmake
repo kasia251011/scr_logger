@@ -4,8 +4,8 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "/media/sf_SCR/project_1/logger.c" "/media/sf_SCR/project_1/cmake-build-debug/CMakeFiles/project_1.dir/logger.c.o"
-  "/media/sf_SCR/project_1/main.c" "/media/sf_SCR/project_1/cmake-build-debug/CMakeFiles/project_1.dir/main.c.o"
+  "/media/sf_SCR/scr_logger/project_1/logger.c" "/media/sf_SCR/scr_logger/project_1/cmake-build-debug/CMakeFiles/project_1.dir/logger.c.o"
+  "/media/sf_SCR/scr_logger/project_1/main.c" "/media/sf_SCR/scr_logger/project_1/cmake-build-debug/CMakeFiles/project_1.dir/main.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 
